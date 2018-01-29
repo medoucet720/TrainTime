@@ -1,0 +1,23 @@
+.jumbotron {
+	width: 80%;
+	margin: auto;
+	background-color: black;
+	color: white;
+	border: 3px solid black;
+	border-radius: 5px;
+}
+
+.card {
+
+	width: 80%;
+	margin: 30px auto;
+}
+
+.form-group {
+	margin: 10px;
+	
+}
+
+#submit{
+	margin: 10px;
+}
