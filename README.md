@@ -7,7 +7,7 @@ Created during Week 7 of Bootcamp. Firebase Application to accept input from use
 ![Screen shot](assets/images/list.png)
 List of trains saved to the Firebase Database.
 
-![Screen shot 2](assets/images/addtrain form.png)
+![Screen shot 2](assets/images/addtrainform.png)
 Form to create new trains to add to the database.
 
 ## Technologies used
