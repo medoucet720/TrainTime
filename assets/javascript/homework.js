@@ -5,66 +5,100 @@
 
 
   // Initialize Firebase
-  var config = {
+    var config = {
     apiKey: "AIzaSyDySbzKfm4vcDdeZMDZT5M8y8U53E6ULbE",
     authDomain: "traintime-70c8c.firebaseapp.com",
     databaseURL: "https://traintime-70c8c.firebaseio.com",
     projectId: "traintime-70c8c",
-    storageBucket: "",
+    storageBucket: "traintime-70c8c.appspot.com",
     messagingSenderId: "223788944954"
   };
   firebase.initializeApp(config);
 
-
- firebase.initializeApp(config);
  var database=firebase.database();
  var currentTime = moment();
 
 
- $("#submit").on("click", function() {
-    // Don't refresh the page!
-      event.preventDefault();
-      console.log("click detected");
+database.ref().on("child_added" , function(childSnapshot){
+    
+    
 
+      var trainName = childSnapshot.val().trainName;
+      var destination = childSnapshot.val().destination;
+      var firstTrainTime = childSnapshot.val().firstTrainTime;
+      var frequency = childSnapshot.val().frequency;
+      var min = childSnapshot.val().min;
+      var next = childSnapshot.val().next;
+
+   $("tbody").append("<tr><td" + name + "</td><td>" + destination + "</td><td>" + time + "</td><td>" 
+            + frequency + "</td><td>" + min + "</td><td>" + next + "</td></tr>");
+ 
+
+
+   });
+   
+database.ref().on("value", function(snapshot){
+
+  
+
+   });
+
+ 
+$("#submit").on("click", function(){
+      event.preventDefault();
       var trainName = $("#name").val().trim();
       var destination = $("#destination").val().trim();
-      var firstTrainTime = $("#firstTrainTime").val();
+      var firstTrainTime = $("#firstTrainTime").val().trim();
       var frequency = $("#frequency").val().trim();
 
-     database.ref().push({
+      if (trainName == ""){
+        alert("Enter a train name.");
+        return false;
+      }
+
+      if (destination == ""){
+        alert("Enter a destination.");
+        return false;
+      }
+
+      if (firstTrainTime == ""){
+        alert("Enter a first train time.");
+        return false;
+      }
+
+      if(frequency ==""){
+        alert("Enter a frequency");
+        return false;
+      }
+
+      var firstTrainConverted = moment(firstTrainTime, "hh:mm").subtract("1, years");
+      var difference = currentTime.diff(moment(firstTrainConverted), "minutes");
+      var remainder = difference % frequency;
+      var minUntilTrain = frequency - remainder;
+      var nextTrain = moment().add(minUntilTrain, "minutes").format("hh:mm a");
+
+      var newTrain ={
         trainName: name,
         destination: destination,
         firstTrainTime: firstTrainTime,
         frequency: frequency,
-        dateAdded: firebase.database.ServerValue.TIMESTAMP
-      });
+        min: minUntilTrain,
+        next: nextTrain
 
-   });
 
-   database.ref().on("child_added", function(childSnapshot){
-      
-      console.log(childSnapshot.val().trainName);
-      console.log(childSnapshot.val().destination);
-      console.log(childSnapshot.val().firstTrainTime);
-      console.log(childSnapshot.val().frequency);
-     
+      }
 
+      console.log(newTrain);
+      database.ref().push(newTrain);
   
-   $("tbody").append("<tr> <td> " + childSnapshot.val().trainName + "</td> <td> " + childSnapshot.val().destination + 
-    "</td> <td> " + childSnapshot.val().firstTrainTime + " </td><td></td><td> " + childSnapshot.val().frequency + "</td> </tr>");
- 
- }, function(errorObject) {
-  console.log("Errors handled: " + errorObject.code);
+    $("#name").val("");
+    $("#destination").val("");
+    $("#firstTrainTime").val("");
+    $("#frequency").val("");
+    
 
- });
-
-  database.ref().orderByChild("data-added").limitToLast(1).on ("child_added", function(snapshot) {
-    $("#name").text(snapshot.val().trainName);
-    $("#destination").text(snapshot.val().destination);
-    $("#firstTrainTime").text(snapshot.val().firstTrainTime);
-    $("#frequency").text(snapshot.val().frequency);
-
-  });
+    return false;
 
 
+});
 });
